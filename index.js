@@ -169,7 +169,19 @@ client.on('qr', async (qr) => {
     });
 
     console.log('📱 QR image generated.');
-    console.log(`🌐 Open: http://localhost:${PORT}/qr`);
+
+    const baseUrl =
+      process.env.RAILWAY_STATIC_URL ||
+      (process.env.RAILWAY_PUBLIC_DOMAIN
+        ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+        : null);
+
+    if (baseUrl) {
+      console.log('🌐 Open this link:', baseUrl + '/qr');
+    } else {
+      console.log(`🌐 Local: http://localhost:${PORT}/qr`);
+    }
+
   } catch (err) {
     console.error('❌ QR ERROR:', err);
   }
