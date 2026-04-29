@@ -1,7 +1,8 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
+const QRCode = require('qrcode');
 const cron = require('node-cron');
 const fs = require('fs');
+const path = require('path');
 const express = require('express');
 
 process.on('uncaughtException', err => {
@@ -15,9 +16,6 @@ process.on('unhandledRejection', err => {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => res.send('Bot is running ✅'));
-app.listen(PORT, '0.0.0.0', () => console.log(`Server started on port ${PORT}`));
-
 // ================= CONFIG =================
 const groupId = "120363404677216164@g.us";
 
@@ -27,13 +25,65 @@ const adminList = [
   "53812064706671@lid"
 ];
 
+// ================= FILES =================
+const publicDir = path.join(__dirname, 'public');
+const qrPath = path.join(publicDir, 'qr.png');
+
+if (!fs.existsSync(publicDir)) {
+  fs.mkdirSync(publicDir, { recursive: true });
+}
+
+// ================= WEB =================
+app.get('/', (req, res) => {
+  res.send(`
+    <html>
+      <head><title>WhatsApp Bot</title></head>
+      <body style="font-family: Arial; padding: 20px;">
+        <h2>Bot is running ✅</h2>
+        <p>QR status:</p>
+        <p><a href="/qr" target="_blank">Open QR page</a></p>
+      </body>
+    </html>
+  `);
+});
+
+app.get('/qr', (req, res) => {
+  if (!fs.existsSync(qrPath)) {
+    return res.status(404).send('QR not ready yet');
+  }
+
+  res.send(`
+    <html>
+      <head><title>WhatsApp QR</title></head>
+      <body style="font-family: Arial; padding: 20px; text-align: center;">
+        <h2>Scan this QR from WhatsApp</h2>
+        <img src="/qr.png?ts=${Date.now()}" style="max-width: 420px; width: 100%; border: 1px solid #ddd;" />
+      </body>
+    </html>
+  `);
+});
+
+app.get('/qr.png', (req, res) => {
+  if (!fs.existsSync(qrPath)) {
+    return res.status(404).send('QR not ready yet');
+  }
+
+  res.setHeader('Cache-Control', 'no-store');
+  res.sendFile(qrPath);
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server started on port ${PORT}`);
+});
+
 // ================= CLIENT =================
 const isProduction = process.env.NODE_ENV === 'production';
+const chromePath = process.env.CHROME_PATH;
 
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    executablePath: isProduction ? process.env.CHROME_PATH : undefined,
+    executablePath: isProduction ? chromePath : undefined,
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
@@ -109,9 +159,20 @@ function isAdmin(message) {
 }
 
 // ================= EVENTS =================
-client.on('qr', qr => {
-  console.log('📱 Scan this QR:');
-  qrcode.generate(qr, { small: true });
+client.on('qr', async (qr) => {
+  try {
+    await QRCode.toFile(qrPath, qr, {
+      type: 'png',
+      width: 420,
+      margin: 2,
+      errorCorrectionLevel: 'M'
+    });
+
+    console.log('📱 QR image generated.');
+    console.log(`🌐 Open: http://localhost:${PORT}/qr`);
+  } catch (err) {
+    console.error('❌ QR ERROR:', err);
+  }
 });
 
 client.on('ready', async () => {
