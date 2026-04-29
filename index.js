@@ -4,171 +4,279 @@ const cron = require('node-cron');
 const fs = require('fs');
 const express = require('express');
 
+process.on('uncaughtException', err => {
+  console.error('UNCAUGHT EXCEPTION:', err);
+});
+
+process.on('unhandledRejection', err => {
+  console.error('UNHANDLED REJECTION:', err);
+});
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.send('Bot is running');
-});
+app.get('/', (req, res) => res.send('Bot is running ✅'));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server started on port ${PORT}`));
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Web server started on ${PORT}`);
-});
-
+// ================= CONFIG =================
 const groupId = "120363404677216164@g.us";
+
+const adminList = [
+  "236408589541460@lid",
+  "163457898942709@lid",
+  "53812064706671@lid"
+];
+
+// ================= CLIENT =================
+const isProduction = process.env.NODE_ENV === 'production';
 
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    executablePath: isProduction ? process.env.CHROME_PATH : undefined,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--no-first-run',
+      '--no-zygote',
+      '--disable-extensions',
+      '--disable-background-networking',
+      '--disable-background-timer-throttling',
+      '--disable-backgrounding-occluded-windows',
+      '--disable-renderer-backgrounding'
+    ]
   }
 });
 
+// ================= DATA =================
 let data = {};
-if (fs.existsSync('data.json')) {
-  data = JSON.parse(fs.readFileSync('data.json', 'utf8'));
-} else {
-  data = {
-    "جوو": 0,
-    "مظن": 3,
-    "سيف": 18,
-    "طاهر": 0,
-    "حوده": 0
-  };
+try {
+  if (fs.existsSync('data.json')) {
+    data = JSON.parse(fs.readFileSync('data.json', 'utf8'));
+    console.log('Data loaded:', data);
+  } else {
+    data = {
+      "جوو": 60,
+      "طاهر": 0,
+      "حوده": 0,
+      "ابوطيز": 0
+    };
+    saveData();
+    console.log('Default data created');
+  }
+} catch (err) {
+  console.error('DATA ERROR:', err);
+  data = {};
 }
 
+// ================= FUNCTIONS =================
 function saveData() {
   fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
 }
 
+function getToday() {
+  return new Intl.DateTimeFormat('ar-EG', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'Africa/Cairo'
+  }).format(new Date());
+}
+
 function formatData(title) {
-  let text = `${title}\n\n`;
-  for (const name in data) {
-    text += `${name} ${data[name]}\n`;
+  let text = `${title}\n📅 ${getToday()}\n`;
+  const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]);
+
+  for (const [name, value] of sorted) {
+    text += `• ${name}: ${value}\n`;
   }
-  return text;
+
+  return text.trim();
 }
 
-function getNameAndValue(parts) {
-  const name = parts[1];
-  const value = parseInt(parts[2], 10);
-  return { name, value };
+function getSenderId(message) {
+  return message.author || message.from;
 }
 
+function isAdmin(message) {
+  const sender = getSenderId(message);
+  const result = adminList.includes(sender);
+  console.log('Sender:', sender, '| Is admin:', result);
+  return result;
+}
+
+// ================= EVENTS =================
 client.on('qr', qr => {
-  console.log(qr);
+  console.log('📱 Scan this QR:');
   qrcode.generate(qr, { small: true });
 });
 
-client.on('ready', () => {
-  console.log('Bot is ready!');
+client.on('ready', async () => {
+  console.log('✅ Bot is ready!');
+
+  try {
+    const test = await client.sendMessage(groupId, '✅ البوت اشتغل');
+    console.log('✅ Startup test sent:', test?.id?._serialized || 'unknown');
+  } catch (err) {
+    console.error('❌ Startup test failed:', err);
+  }
+});
+
+client.on('auth_failure', msg => {
+  console.error('❌ Auth failure:', msg);
+});
+
+client.on('disconnected', reason => {
+  console.warn('⚠️ Disconnected:', reason);
 });
 
 client.on('message', async (message) => {
-  const msg = message.body.trim();
+  try {
+    if (message.from !== groupId) return;
 
-  if (msg === 'مساعدة') {
-    return message.reply(
-`🤖 تعليمات البوت:
+    const raw = message.body;
+    if (!raw) return;
 
-📊 عرض العداد:
-عداد
+    const msg = raw.replace(/@\d+/g, '').trim();
+    const msgLower = msg.toLowerCase();
 
-➕ إضافة شخص:
-ضيف الاسم الرقم
-مثال: ضيف احمد 5
+    console.log('📩 MSG from', getSenderId(message), ':', msg);
 
-✏️ تعديل رقم شخص:
-خلي الاسم الرقم
-مثال: خلي احمد 10
+    const send = async (text) => {
+      try {
+        const sent = await client.sendMessage(message.from, text);
+        console.log('✅ Sent to group:', sent?.id?._serialized || message.from);
+      } catch (err) {
+        console.error('❌ Send error:', err);
+      }
+    };
 
-❌ تصفير شخص:
-الاسم وقع
-مثال: احمد وقع
-
-🗑️ حذف شخص نهائيًا:
-امسح الاسم
-مثال: امسح احمد
-
-⏰ كل يوم الساعة 12 هيزود +1 لكل شخص ويبعت النتيجة في الجروب`
-    );
-  }
-
-  if (msg === 'عداد') {
-    return message.reply(formatData('📊 الحالة الحالية:'));
-  }
-
-  if (msg.startsWith('ضيف ')) {
-    const { name, value } = getNameAndValue(msg.split(' '));
-
-    if (!name || Number.isNaN(value)) {
-      return message.reply('❌ استخدم: ضيف الاسم الرقم');
+    // ===== أوامر للكل =====
+    if (msgLower.includes('عداد')) {
+      return send(formatData('📊 الحالة الحالية:'));
     }
 
-    data[name] = value;
-    saveData();
-    return message.reply(`✅ تم إضافة ${name} = ${value}`);
-  }
+    if (msgLower.includes('مساعدة')) {
+      const adminHelp = isAdmin(message)
+        ? `
 
-  if (msg.startsWith('خلي ')) {
-    const { name, value } = getNameAndValue(msg.split(' '));
+🔐 أوامر الأدمن:
+➕ ضيف [الاسم] [الرقم] — إضافة شخص جديد
+✏️ خلي [الاسم] [الرقم] — تعديل سكور شخص
+🗑️ امسح [الاسم] — حذف شخص
+↩️ [الاسم] وقع — رجوع لصفر`
+        : '';
 
-    if (!name || Number.isNaN(value)) {
-      return message.reply('❌ استخدم: خلي الاسم الرقم');
+      return send(`🤖 أوامر البوت:
+
+📊 عداد — عرض الأرقام الحالية
+🆘 مساعدة — عرض الأوامر${adminHelp}`);
     }
 
-    if (data[name] === undefined) {
-      return message.reply('❌ الاسم مش موجود');
+    // ===== أوامر الأدمن بس =====
+    if (msgLower.startsWith('ضيف ')) {
+      if (!isAdmin(message)) {
+        return send('🚫 الأمر ده للأدمن بس!');
+      }
+
+      const parts = msg.split(' ').filter(Boolean);
+      const name = parts[1];
+      const value = parseInt(parts[2], 10);
+
+      if (!name || isNaN(value)) {
+        return send('❌ استخدم: ضيف [الاسم] [الرقم]\nمثال: ضيف أحمد 5');
+      }
+
+      data[name] = value;
+      saveData();
+      return send(`✅ تم إضافة ${name} برقم ${value}`);
     }
 
-    data[name] = value;
-    saveData();
-    return message.reply(`✏️ تم تعديل ${name} = ${value}`);
-  }
+    if (msgLower.startsWith('خلي ')) {
+      if (!isAdmin(message)) {
+        return send('🚫 الأمر ده للأدمن بس!');
+      }
 
-  if (msg.startsWith('امسح ')) {
-    const name = msg.split(' ')[1];
+      const parts = msg.split(' ').filter(Boolean);
+      const name = parts[1];
+      const value = parseInt(parts[2], 10);
 
-    if (!name || data[name] === undefined) {
-      return message.reply('❌ الاسم مش موجود');
+      if (!name || isNaN(value)) {
+        return send('❌ استخدم: خلي [الاسم] [الرقم]\nمثال: خلي أحمد 10');
+      }
+
+      if (data[name] === undefined) {
+        return send(`❌ "${name}" مش موجود في القايمة`);
+      }
+
+      data[name] = value;
+      saveData();
+      return send(`✏️ تم تعديل ${name} → ${value}`);
     }
 
-    delete data[name];
-    saveData();
-    return message.reply(`🗑️ تم حذف ${name}`);
-  }
+    if (msgLower.startsWith('امسح ')) {
+      if (!isAdmin(message)) {
+        return send('🚫 الأمر ده للأدمن بس!');
+      }
 
-  if (msg.endsWith('وقع')) {
-    const name = msg.replace(/\s*وقع$/, '').trim();
+      const name = msg.split(' ').slice(1).join(' ').trim();
 
-    if (!name || data[name] === undefined) {
-      return message.reply('❌ الاسم مش موجود');
+      if (!name || data[name] === undefined) {
+        return send(`❌ "${name}" مش موجود في القايمة`);
+      }
+
+      delete data[name];
+      saveData();
+      return send(`🗑️ تم حذف ${name}`);
     }
 
-    data[name] = 0;
-    saveData();
-    return message.reply(`${name} رجع صفر ❌`);
+    if (msg.endsWith('وقع')) {
+      if (!isAdmin(message)) {
+        return send('🚫 الأمر ده للأدمن بس!');
+      }
+
+      const name = msg.replace(/وقع$/, '').trim();
+
+      if (!name || data[name] === undefined) {
+        return send(`❌ "${name}" مش موجود في القايمة`);
+      }
+
+      data[name] = 0;
+      saveData();
+      return send(`↩️ ${name} رجع لصفر`);
+    }
+
+  } catch (err) {
+    console.error('❌ MESSAGE ERROR:', err);
   }
 });
 
+// ================= DAILY CRON =================
 cron.schedule(
   '0 0 * * *',
   async () => {
-    for (const name in data) {
-      data[name] += 1;
-    }
-
-    saveData();
-
     try {
-      const chat = await client.getChatById(groupId);
-      await chat.sendMessage(formatData('📊 الحالة اليومية:'));
-      console.log('Daily message sent');
+      console.log('⏰ Running daily cron...');
+
+      for (const name in data) {
+        data[name]++;
+      }
+
+      saveData();
+
+      await client.sendMessage(groupId, formatData('📊 الحالة اليومية:'));
+
+      console.log('✅ Daily message sent');
     } catch (err) {
-      console.error('Failed to send daily message:', err);
+      console.error('❌ CRON ERROR:', err);
     }
   },
   { timezone: 'Africa/Cairo' }
 );
 
+// ================= START =================
+console.log('🚀 Starting bot...');
 client.initialize();

@@ -1,3 +1,2 @@
-2026/04/29-01:58:04.948 3994 Reusing MANIFEST C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\Sync Data\LevelDB/MANIFEST-000001
-2026/04/29-01:58:04.950 3994 Recovering log #3
-2026/04/29-01:58:04.951 3994 Reusing old log C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\Sync Data\LevelDB/000003.log 
+2026/04/29-17:38:02.476 2bc4 Creating DB C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\Sync Data\LevelDB since it was missing.
+2026/04/29-17:38:02.537 2bc4 Reusing MANIFEST C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\Sync Data\LevelDB/MANIFEST-000001
