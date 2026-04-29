@@ -1,2 +1,4 @@
-2026/04/29-17:57:03.216 4b14 Creating DB C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\shared_proto_db since it was missing.
-2026/04/29-17:57:03.308 4b14 Reusing MANIFEST C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\shared_proto_db/MANIFEST-000001
+2026/04/29-20:07:12.449 e7c Creating DB C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\shared_proto_db since it was missing.
+2026/04/29-20:07:12.479 e7c Reusing MANIFEST C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\shared_proto_db/MANIFEST-000001
+2026/04/29-20:07:12.484 e7c Recovering log #3
+2026/04/29-20:07:12.484 e7c Reusing old log C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\shared_proto_db/000003.log 

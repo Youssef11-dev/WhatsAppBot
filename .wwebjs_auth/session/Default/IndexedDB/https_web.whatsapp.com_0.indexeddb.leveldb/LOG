@@ -1,23 +1,27 @@
-2026/04/29-17:57:05.526 3db0 Creating DB C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb since it was missing.
-2026/04/29-17:57:05.546 3db0 Reusing MANIFEST C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2026/04/29-17:57:41.945 3db0 Level-0 table #5: started
-2026/04/29-17:57:41.974 3db0 Level-0 table #5: 1011058 bytes OK
-2026/04/29-17:57:41.985 3db0 Delete type=0 #3
-2026/04/29-17:57:43.510 3db0 Level-0 table #7: started
-2026/04/29-17:57:43.594 3db0 Level-0 table #7: 1095865 bytes OK
-2026/04/29-17:57:43.600 3db0 Delete type=0 #4
-2026/04/29-17:57:43.628 ea0 Compacting 1@1 + 1@2 files
-2026/04/29-17:57:43.670 ea0 Generated table #8@1: 23178 keys, 1069003 bytes
-2026/04/29-17:57:43.670 ea0 Compacted 1@1 + 1@2 files => 1069003 bytes
-2026/04/29-17:57:43.676 ea0 compacted to: files[ 0 0 1 0 0 0 0 ]
-2026/04/29-17:57:43.676 ea0 Delete type=2 #5
-2026/04/29-17:57:43.676 ea0 Delete type=2 #7
-2026/04/29-17:57:49.646 3db0 Level-0 table #10: started
-2026/04/29-17:57:49.674 3db0 Level-0 table #10: 1040238 bytes OK
-2026/04/29-17:57:49.679 3db0 Delete type=0 #6
-2026/04/29-17:57:50.776 3db0 Compacting 1@1 + 1@2 files
-2026/04/29-17:57:51.384 3db0 Generated table #11@1: 31077 keys, 1405806 bytes
-2026/04/29-17:57:51.384 3db0 Compacted 1@1 + 1@2 files => 1405806 bytes
-2026/04/29-17:57:51.854 3db0 compacted to: files[ 0 0 1 0 0 0 0 ]
-2026/04/29-17:57:51.854 3db0 Delete type=2 #8
-2026/04/29-17:57:51.854 3db0 Delete type=2 #10
+2026/04/29-20:07:13.201 47cc Creating DB C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb since it was missing.
+2026/04/29-20:07:13.224 47cc Reusing MANIFEST C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/04/29-20:07:13.224 47cc Recovering log #43
+2026/04/29-20:07:13.228 47cc Reusing old log C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000043.log 
+2026/04/29-20:07:13.228 47cc Delete type=2 #42
+2026/04/29-20:07:13.228 47cc Delete type=2 #45
+2026/04/29-20:07:30.186 47e8 Level-0 table #45: started
+2026/04/29-20:07:30.210 47e8 Level-0 table #45: 987589 bytes OK
+2026/04/29-20:07:30.216 47e8 Delete type=0 #43
+2026/04/29-20:07:31.134 47f4 Level-0 table #47: started
+2026/04/29-20:07:31.451 47f4 Level-0 table #47: 1094349 bytes OK
+2026/04/29-20:07:31.460 47f4 Delete type=0 #44
+2026/04/29-20:07:31.467 47f4 Compacting 1@1 + 1@2 files
+2026/04/29-20:07:31.514 47f4 Generated table #48@1: 21974 keys, 1041986 bytes
+2026/04/29-20:07:31.514 47f4 Compacted 1@1 + 1@2 files => 1041986 bytes
+2026/04/29-20:07:31.518 47f4 compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/04/29-20:07:31.518 47f4 Delete type=2 #45
+2026/04/29-20:07:31.518 47f4 Delete type=2 #47
+2026/04/29-20:07:43.925 47e8 Level-0 table #50: started
+2026/04/29-20:07:43.971 47e8 Level-0 table #50: 1072674 bytes OK
+2026/04/29-20:07:43.977 47e8 Delete type=0 #46
+2026/04/29-20:07:44.443 47c4 Compacting 1@1 + 1@2 files
+2026/04/29-20:07:44.480 47c4 Generated table #51@1: 28839 keys, 1354864 bytes
+2026/04/29-20:07:44.480 47c4 Compacted 1@1 + 1@2 files => 1354864 bytes
+2026/04/29-20:07:44.482 47c4 compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/04/29-20:07:44.482 47c4 Delete type=2 #48
+2026/04/29-20:07:44.482 47c4 Delete type=2 #50

@@ -1,2 +1,4 @@
-2026/04/29-17:57:03.148 4938 Creating DB C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\Session Storage since it was missing.
-2026/04/29-17:57:03.241 4938 Reusing MANIFEST C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\Session Storage/MANIFEST-000001
+2026/04/29-20:07:12.419 10a8 Creating DB C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\Session Storage since it was missing.
+2026/04/29-20:07:12.457 10a8 Reusing MANIFEST C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\Session Storage/MANIFEST-000001
+2026/04/29-20:07:12.457 10a8 Recovering log #3
+2026/04/29-20:07:12.460 10a8 Reusing old log C:\Users\youss\OneDrive\Desktop\WH bot\.wwebjs_auth\session\Default\Session Storage/000003.log 
